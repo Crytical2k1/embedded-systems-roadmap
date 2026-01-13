@@ -1,14 +1,14 @@
---BLINK LED WITHOUT DELAY--
+# BLINK LED WITHOUT DELAY
 
 This is my first embedded project to put into practice some of the knowdelge i got from the theory of the phase 0 including bit operations, register and port designation, creation of a timer and interrupt utilization.
 
--Project idea-
+## Project idea
 Generate code that will blink an LED without using delay(), and making use of interrupts and timer flow.
 
--Hardware-
+## Hardware
 Elegoo/Arduino Uno R3 (ATMega328P)
 
--Process of code development-
+## Process of code development
 
 1. GPIO setup
    .h files is easy to implement as they are just stating the functions (forward declaration) i will develop in .c files.
@@ -27,7 +27,7 @@ Elegoo/Arduino Uno R3 (ATMega328P)
    simple code implemented here, initialization of the functions GPIO and timer
    And getting into the super-loop that will check if the time elapsed from last blink to the current time is more than the blinking period, running the toggling led function just when needed.
 
--Problems encountered-
+## Problems encountered
 Main issue was understanding the datasheet and knowing what registers to use to achive the functionality that i needed.
 
 Figure out the proper structure of the files and order of declaration of each function. As i advanced on the project more of the theory was coming to place and making sense by putting it together.
