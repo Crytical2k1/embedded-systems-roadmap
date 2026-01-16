@@ -1,11 +1,13 @@
-#include <avr/io.h>
+#include <avr/interrupt.h>
 #include "gpio.h"
 #include "isr_flags.h"
+#include "timer.h"
 
 int main(void) {
   //initailizacion
   gpio_init();
   timer_init();
+  sei(); // enable global interrupts
   //super-loop
   while(1) {
     //flag utilization
