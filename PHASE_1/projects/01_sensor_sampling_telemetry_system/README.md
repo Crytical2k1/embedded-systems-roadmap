@@ -10,7 +10,6 @@ Generate code that will collect ADC data, convert it into digital and send it th
 
 Elegoo/Arduino Uno R3 (ATMega328P)
 Light Sensor
-Capacitor 10nF
 Resistor 10kOhm
 
 ## Process of code development
