@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "isr_flags.h"
 #include "adc.h"
+#include "lcd_display.h"
 #include <stdint.h>
 #include <avr/interrupt.h>
 
@@ -11,16 +12,22 @@
 static const uint16_t sample_rate_list[3] = {100, 500, 1000};
 static const uint8_t pressed_period = 200;
 #define ADC_CHANNEL 1
+#define LCD_PERIOD 500 //500ms
 //state
 static uint16_t sample_period;
 static uint32_t last_sample_time = 0;
+static uint32_t last_lcd_time = 0;
 static uint32_t last_pressed_time = 0;
 static uint8_t i = 0;
+static uint16_t adc_value;
 
 void app_init(void) {
     sample_period = sample_rate_list[i];
     gpio_init();
     gpio_sample_toggle_led(i);
+    lcd_init();
+    lcd_set_cursor(0, 0);
+    lcd_write_string("Sensor ready");
     serial_init(9600);
     adc_init();
     timer_init();
@@ -31,11 +38,20 @@ void app_sensor_sample(void) {
     uint32_t now = get_time_ms();
     if ((now - last_sample_time) >= sample_period) {
         gpio_toggle_led();
-        uint16_t value = adc_sample(ADC_CHANNEL);
-        serial_write_uint(value);
+        adc_value = adc_sample(ADC_CHANNEL);
+        serial_write_uint(adc_value);
         serial_write_char('\n');
 
         last_sample_time = now;
+    }
+    if ((now - last_lcd_time) >= LCD_PERIOD) {
+        uint16_t buffer_value = adc_value;
+        lcd_set_cursor(0, 0);
+        lcd_write_string("Light intensity");
+        lcd_set_cursor(1, 0);
+        lcd_write_int(buffer_value);
+
+        last_lcd_time = now;
     }
 }
 
