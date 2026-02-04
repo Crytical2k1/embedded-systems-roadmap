@@ -27,7 +27,7 @@ static void lcd_send_nibble(uint8_t nibble) {
     if (nibble & 0x08) SET_PIN(LCD_D7, LCD_DATA_PORT); else CLEAR_PIN(LCD_D7, LCD_DATA_PORT);
 
     SET_PIN(LCD_E, LCD_ENABLE_PORT);
-    _delay_us(1);
+    for(volatile uint8_t i=0;i<5;i++); //short pulse
     CLEAR_PIN(LCD_E, LCD_ENABLE_PORT);
     _delay_us(50);
 }
@@ -40,29 +40,26 @@ static void lcd_send_byte(uint8_t data, uint8_t rs) {
     lcd_send_nibble(data & 0x0F);
 }
 
-static void lcd_clear(void) {
-    lcd_send_byte(0x01, 0);
-    _delay_ms(2);
-}
-
 void lcd_init(void) {
+	//set to output every pin
     LCD_REGISTER_DDR |= (1 << LCD_RS);
     LCD_ENABLE_DDR |= (1 << LCD_E);
     LCD_DATA_DDR |= (1 << LCD_D4) | (1 << LCD_D5) | (1 << LCD_D6) | (1 << LCD_D7);
-
-    _delay_ms(40);
-
-    lcd_send_nibble(0x03);
-    _delay_ms(5);
-    lcd_send_nibble(0x03);
-    _delay_us(150);
-    lcd_send_nibble(0x03);
-    lcd_send_nibble(0x02); // 4-bit mode
-
-    lcd_send_byte(0x28, 0); // 2 lines, 5x8 font
-    lcd_send_byte(0x0C, 0); //display ON
-    lcd_send_byte(0x06, 0); // entry mode
-    lcd_clear();
+	
+	//forced lcd reset
+	_delay_ms(40);
+	lcd_send_nibble(0x03); //function set command
+	_delay_ms(5);
+	lcd_send_nibble(0x03); //repeat command (in case was ignored)
+	_delay_us(150);
+	lcd_send_nibble(0x03); //repeat command (ensures synchronization)
+	lcd_send_nibble(0x02); //4-bit mode
+	
+	//initialize the lcd
+	lcd_send_byte(0x28, 0); //2 lines, 5x8 font
+	lcd_send_byte(0x0C, 0); // display ON
+	lcd_send_byte(0x06, 0); //entry mode
+	lcd_send_byte(0x01, 0); //clear display
 }
 
 void lcd_set_cursor(uint8_t row, uint8_t col) {
