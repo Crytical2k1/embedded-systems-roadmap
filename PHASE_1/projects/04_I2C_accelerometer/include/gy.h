@@ -14,5 +14,6 @@ void gy_init(void);
 void gy_write_reg(uint8_t reg, uint8_t data);
 uint8_t gy_read_reg(uint8_t reg);
 void gy_read_bytes(uint8_t reg, uint8_t *buffer, uint8_t length);
+void gy_who_am_i(void);
 
 #endif

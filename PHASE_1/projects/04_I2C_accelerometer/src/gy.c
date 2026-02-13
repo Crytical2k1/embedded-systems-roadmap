@@ -1,5 +1,6 @@
 #include "gy.h"
 #include "twi.h"
+#include "uart.h"
 
 void gy_init(void) {
     //wake sensor
@@ -56,4 +57,17 @@ void gy_read_bytes(uint8_t reg, uint8_t *buffer, uint8_t length) {
     buffer[length - 1] = twi_read_nack();
 
     twi_stop();
+}
+void gy_who_am_i(void) {
+  //test WHO_AM_I verify sensor communication
+  uint8_t id = gy_read_reg(GY_WHO_AM_I);
+  uart_write_string("WHO_AM_I: ");
+  uart_write_hex(id);
+  uart_write_char('\n');
+
+  //Check sensor identity (MPU-6500 -> 0x70)
+  if (id != 0x70)
+  {
+      uart_write_string("Sensor not detected!\n");
+  }
 }
