@@ -41,6 +41,7 @@ void uart_write_int(int16_t value){
         uart_write_char(buffer[--i]);
     }
 }
+
 void uart_write_hex(uint8_t value) {
     char hex_chars[] = "0123456789ABCDEF";
     uart_write_string("0x");
@@ -50,6 +51,22 @@ void uart_write_hex(uint8_t value) {
     
     // Print low nibble
     uart_write_char(hex_chars[value & 0x0F]);
+}
+
+void uart_write_float(float value) {
+    if (value < 0) {
+        uart_write_char('-');
+        value = -value;
+    }
+    int16_t int_part = (uint16_t)value;
+    uart_write_int(int_part);
+    uart_write_char('.');
+    float fraction = value - int_part;
+    for (uint8_t i = 0; i < 2; i++) { // 2 -> number of decimals
+        fraction *= 10;
+    }
+    uint16_t frac_part = (uint16_t)(fraction + 0.5f); //rounding
+    uart_write_int(frac_part);
 }
 
 void uart_write_string(const char *str) {

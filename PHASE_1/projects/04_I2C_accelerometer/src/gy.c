@@ -5,6 +5,7 @@
 void gy_init(void) {
     //wake sensor
     gy_write_reg(GY_PWR_MGMT_1, 0x00);
+    gy_write_reg(0x1A, 0x03); // enable internal low pass filter
 }
 
 void gy_write_reg(uint8_t reg, uint8_t data) {
