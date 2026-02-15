@@ -21,10 +21,11 @@ class SerialReader(QThread):
                 continue
 
             try:
-                ax, ay, az = map(float, values.split(','))
-                roll, pitch, yaw = get_rotation_angles(ax, ay, az)
+                #ax, ay, az = map(float, values.split(','))
+                #roll, pitch, yaw = get_rotation_angles(ax, ay, az)
+                roll, pitch = map(float, values.split(','))
 
-                self.orientation_updated.emit(roll, pitch, yaw)
+                self.orientation_updated.emit(-roll, pitch, 0.0)
 
             except ValueError:
                 continue

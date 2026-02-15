@@ -2,9 +2,11 @@
 #include "twi.h"
 #include "gy.h"
 #include "uart.h"
+#include "leds.h"
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <math.h>
 
 static uint8_t buffer[6];
 static int16_t refactor_x = 0;
@@ -14,8 +16,10 @@ static int16_t refactor_z = 0;
 #define AXIS_X 0
 #define AXIS_Y 1
 #define AXIS_Z 2
-#define ALPHA 128 // 0.1 ~ 26/256
-static int32_t filter_value[3] = {0, 0, 0};
+#define ALPHA 0.3f
+static float filter_value[2] = {0.0f, 0.0f};
+static float roll;
+static float pitch;
 
 static void sensor_calibration(void) {
     int32_t buffer_ax = 0;
@@ -54,6 +58,8 @@ void app_init(void) {
     _delay_ms(100);
     //test sensor communication
     gy_who_am_i();
+    //initialize leds
+    led_init();
 
     //calibrate sensor
     sensor_calibration();
@@ -76,28 +82,36 @@ static int16_t refactor_calibrate(int16_t value, uint8_t axis) {
     return value;
 }
 
-static int16_t EMA_filter(int16_t raw_value, uint8_t axis) {
-    filter_value[axis] += (ALPHA * (raw_value - filter_value[axis])) >> 8; //restore scale factor from ALPHA
-    return (int16_t)filter_value[axis];
+static float EMA_filter(float raw_value, uint8_t axis) {
+    filter_value[axis] += (ALPHA * (raw_value - filter_value[axis])); //restore scale factor from ALPHA
+    return filter_value[axis];
+}
+
+void get_angles(void) {
+    gy_read_bytes(GY_ACCEL_XOUT_H, buffer, 6);
+
+    float ax = (float)refactor_calibrate(((buffer[0] << 8) | buffer[1]), AXIS_X);
+    float ay = (float)refactor_calibrate(((buffer[2] << 8) | buffer[3]), AXIS_Y);
+    float az = (float)refactor_calibrate(((buffer[4] << 8) | buffer[5]), AXIS_Z);
+
+    //Roll (rotation around x axis)
+    float pitch_raw = atan2f(ay, az) * (180.0f / M_PI);
+    pitch = EMA_filter(pitch_raw, AXIS_X);
+
+    //Pitch (rotation around Y axis)
+    float roll_raw = atan2f(-ax, sqrtf((ay*ay + az*az))) * (180.0f / M_PI);
+    roll = EMA_filter(roll_raw, AXIS_Y);
 }
 
 void app_orientation(void) {
 
-    gy_read_bytes(GY_ACCEL_XOUT_H, buffer, 6);
+    get_angles();
+    uint8_t led_bits = build_led_state(roll, pitch);
+    shift595(led_bits);
 
-    int16_t ax = refactor_calibrate(((buffer[0] << 8) | buffer[1]), AXIS_X);
-    int16_t ay = refactor_calibrate(((buffer[2] << 8) | buffer[3]), AXIS_Y);
-    int16_t az = refactor_calibrate(((buffer[4] << 8) | buffer[5]), AXIS_Z);
-
-    ax = EMA_filter(ax, AXIS_X);
-    ay = EMA_filter(ay, AXIS_Y);
-    az = EMA_filter(az, AXIS_Z);
-
-    uart_write_int(ax);
+    uart_write_float(roll);
     uart_write_char(',');
-    uart_write_int(ay);
-    uart_write_char(',');
-    uart_write_int(az);
+    uart_write_float(pitch);
     uart_write_char('\n');
-    _delay_ms(50);
+    _delay_ms(100);
 }
