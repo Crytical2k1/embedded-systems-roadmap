@@ -8,7 +8,8 @@
 // Registers
 #define GY_WHO_AM_I 0x75
 #define GY_PWR_MGMT_1 0x6B
-#define GY_ACCEL_XOUT_H 0x3B
+#define GY_ACCEL_XOUT_H 0x3B //accelerometer x values
+#define GY_GYRO_XOUT_H 0x43 //gyroscope x values
 
 void gy_init(void);
 void gy_write_reg(uint8_t reg, uint8_t data);

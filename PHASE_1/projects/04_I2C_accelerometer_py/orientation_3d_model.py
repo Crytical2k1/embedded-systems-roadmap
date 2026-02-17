@@ -5,7 +5,6 @@ from PyQt5.QtOpenGL import QGLWidget
 from OpenGL.GL import *
 from orientation_log import SerialReader
 
-
 class GLWidget(QGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -53,6 +52,7 @@ class GLWidget(QGLWidget):
 
         glBegin(GL_QUADS)
 
+        #-----------draw cube-----------------
         # Top
         glColor3f(1, 0, 0)
         glVertex3f(1, 0.2, -1)
@@ -95,6 +95,7 @@ class GLWidget(QGLWidget):
         glVertex3f(1, -0.2, 1)
         glVertex3f(1, -0.2, -1)
 
+        #-----------draw axis-----------------
         # Z-axis
         glColor3f(1, 1, 1)
         glVertex3f(-0.01, 0, 2)
@@ -120,7 +121,7 @@ class GLWidget(QGLWidget):
     def timerEvent(self, event):
         self.update()
 
-
+#create window for representation
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()

@@ -5,7 +5,7 @@
 #define LED_BIT_CLOCK 6
 #define LED_BIT_LATCH 4
 #define LED_BIT_DATA 2
-
+// LED MATRIX data bits
 #define TOP_G 0
 #define TOP_R 4
 #define BOTTOM_G 1
@@ -21,6 +21,7 @@ void led_init(void) {
 }
 
 void shift595(uint8_t data) {
+    //cycle through each bit of the data byte
     for (int8_t i = 7; i >= 0; i--) {
         //set DATA bit
         if (data & (1 << i)) {
@@ -40,8 +41,9 @@ void shift595(uint8_t data) {
     LED_PORT &= ~(1 << LED_BIT_LATCH);
 }
 
-uint8_t build_led_state(float roll, float pitch)
-{
+uint8_t build_led_state(float roll, float pitch) {
+    // based on the roll and pitch angles, compares the inclination to the limits and sets the bits to 1 or 0
+    //the limit values is dependent of my schema and device perspective
     uint8_t leds = 0;
 
     // Pitch up

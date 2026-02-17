@@ -22,6 +22,7 @@ void uart_write_char(char c){
     UDR0 = c;
 }
 void uart_write_int(int16_t value){
+    //simple ascii conversor
     char buffer[7];
     uint8_t i = 0;
 
@@ -29,6 +30,7 @@ void uart_write_int(int16_t value){
         uart_write_char('0');
         return;
     }
+    //handle negative values
     if (value < 0) {
         uart_write_char('-');
         value = -value;
@@ -43,6 +45,7 @@ void uart_write_int(int16_t value){
 }
 
 void uart_write_hex(uint8_t value) {
+    //mapping integers to the corresponding character of the hexadecimal base
     char hex_chars[] = "0123456789ABCDEF";
     uart_write_string("0x");
     
@@ -54,18 +57,22 @@ void uart_write_hex(uint8_t value) {
 }
 
 void uart_write_float(float value) {
+    //handle negative value
     if (value < 0) {
         uart_write_char('-');
         value = -value;
     }
+    //Take the interger part
     int16_t int_part = (uint16_t)value;
     uart_write_int(int_part);
     uart_write_char('.');
+    //Take the factional part
     float fraction = value - int_part;
     for (uint8_t i = 0; i < 2; i++) { // 2 -> number of decimals
         fraction *= 10;
     }
-    uint16_t frac_part = (uint16_t)(fraction + 0.5f); //rounding
+    //rounding (if not it would always round to the lower number even if its 0.99)
+    uint16_t frac_part = (uint16_t)(fraction + 0.5f);
     uart_write_int(frac_part);
 }
 

@@ -1,5 +1,7 @@
 import math
 
+#calculate rotation angles based on raw accel data from sensor
+#not used anymore as it is done by the mcu
 def get_rotation_angles(ax, ay, az):
     """
     ax, ay, az: accelerometer values (gravity vector)
@@ -20,7 +22,7 @@ def get_rotation_angles(ax, ay, az):
         math.degrees(pitch),
         yaw
     )
-
+#adjust orientation axes of the 3d based on my own perspective of the device
 def align_axes(sx, sy, sz):
     """
     Convert sensor axes to OpenGL axes
