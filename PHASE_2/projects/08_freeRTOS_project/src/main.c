@@ -1,5 +1,6 @@
 #include "sensor_manager.h"
 #include "system_events.h"
+#include "data_processor.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -9,6 +10,7 @@
 static const char *TAG = "main";
 
 #define SENSOR_MANAGER_PRIO 6
+#define PROCESS_DATA_PRIO 5
 
 void app_main() {
     vTaskDelay(pdMS_TO_TICKS(2000));
@@ -19,8 +21,23 @@ void app_main() {
         while(1) {vTaskDelay(portMAX_DELAY);}
     }
     ESP_LOGI(TAG, "Event group created");
+    //create raw_data queue
+    QueueHandle_t raw_data_queue = xQueueCreate(6, sizeof(raw_data_t));
+    if (raw_data_queue == NULL) {
+        ESP_LOGE(TAG, "Failed to create raw_data queue");
+        while(1) {vTaskDelay(portMAX_DELAY);}
+    }
+    ESP_LOGI(TAG, "Raw_data queue created");
+    //initialize processing task
+    esp_err_t esp_ret = xTaskCreate(raw_proccesing_task, "raw_processing_task", 4096, (void *)raw_data_queue, PROCESS_DATA_PRIO, NULL);
+    if (esp_ret != pdPASS) {
+        ESP_LOGE(TAG, "FATAL, failed to create data processing task");
+        return;
+    }
+    ESP_LOGI(TAG, "Successfully create data processing task.");
+
     //initialize sensor manager
-    esp_err_t esp_ret = xTaskCreate(sensor_manager_init, "init_sensors", 2048, NULL, SENSOR_MANAGER_PRIO, NULL);
+    esp_ret = xTaskCreate(sensor_manager_init, "init_sensors", 2048, (void *)raw_data_queue, SENSOR_MANAGER_PRIO, NULL);
     if (esp_ret != pdPASS) {
         ESP_LOGE(TAG, "FATAL, failed to create sensor manager task");
         return;

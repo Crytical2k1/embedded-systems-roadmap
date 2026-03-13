@@ -14,6 +14,9 @@ static const char *TAG = "sensor_manager";
 #define NTC_READ_PRIO 5
 #define PHOTO_READ_PRIO 5
 
+#define NTC_SENSOR_ID 0
+#define PHOTO_SENSOR_ID 1
+
 //forward declaration
 static void ntc_manager_init(void *pvParameters);
 static void photo_manager_init(void *pvParameters);
@@ -22,9 +25,16 @@ static void photo_read_task(void *pvParameters);
 
 //main manager function
 void sensor_manager_init(void *pvParameters) {
+    QueueHandle_t raw_data_queue = pvParameters;
+    
     //TODO------------------------------------------------>
     //buzzer_init();
 
+    //set ADC bit width
+    esp_err_t esp_ret = adc1_config_width(4095);
+    if(esp_ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set ADC bit width");
+    }
     //Create initialization tasks
     xTaskCreate(ntc_manager_init, "NTC_init", 2048, NULL, NTC_INIT_PRIO, NULL);
     xTaskCreate(photo_manager_init, "Photo_init", 2048, NULL, PHOTO_INIT_PRIO, NULL);
@@ -59,8 +69,8 @@ void sensor_manager_init(void *pvParameters) {
     xEventGroupSetBits(system_event_group, EVENT_SYSTEM_READY);
     ESP_LOGI(TAG, "Event System Ready set. Running tasks...");
     //start running tasks
-    xTaskCreate(ntc_read_task,"read_ntc", 4092, NULL, NTC_READ_PRIO, NULL);
-    xTaskCreate(photo_read_task,"read_light", 4092, NULL, PHOTO_READ_PRIO, NULL);
+    xTaskCreate(ntc_read_task,"read_ntc", 4092, (void *)raw_data_queue, NTC_READ_PRIO, NULL);
+    xTaskCreate(photo_read_task,"read_light", 4092, (void *)raw_data_queue, PHOTO_READ_PRIO, NULL);
     ESP_LOGI(TAG, "System startup complete. Loop running.");
 
     //manager init task done
@@ -88,19 +98,25 @@ static void photo_manager_init(void *pvParameters) {
 }
 
 void ntc_read_task(void *pvParameters) {
-    uint16_t raw_value;
+    QueueHandle_t raw_data_queue = pvParameters;
+    raw_data_t raw_data_ntc;
+    raw_data_ntc.sensor_id = NTC_SENSOR_ID;
+
     while (1) {
-        raw_value = ntc_read();
-        printf("Temp: %d\r\n", raw_value);
+        raw_data_ntc.data[0] = ntc_read();
+        xQueueSendToBack(raw_data_queue, &raw_data_ntc, pdMS_TO_TICKS(100));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
 void photo_read_task(void *pvParameters) {
-    uint16_t raw_value;
+    QueueHandle_t raw_data_queue = pvParameters;
+    raw_data_t raw_data_photo;
+    raw_data_photo.sensor_id = PHOTO_SENSOR_ID;
+
     while (1) {
-        raw_value = photo_read();
-        printf("Light: %d\r\n", raw_value);
+        raw_data_photo.data[0] = photo_read();
+        xQueueSendToBack(raw_data_queue, &raw_data_photo, pdMS_TO_TICKS(100));
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
