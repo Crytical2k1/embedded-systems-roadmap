@@ -103,7 +103,7 @@ void ntc_read_task(void *pvParameters) {
     raw_data_ntc.sensor_id = NTC_SENSOR_ID;
 
     while (1) {
-        raw_data_ntc.data[0] = ntc_read();
+        raw_data_ntc.data = ntc_read();
         xQueueSendToBack(raw_data_queue, &raw_data_ntc, pdMS_TO_TICKS(100));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -115,7 +115,7 @@ void photo_read_task(void *pvParameters) {
     raw_data_photo.sensor_id = PHOTO_SENSOR_ID;
 
     while (1) {
-        raw_data_photo.data[0] = photo_read();
+        raw_data_photo.data = photo_read();
         xQueueSendToBack(raw_data_queue, &raw_data_photo, pdMS_TO_TICKS(100));
         vTaskDelay(pdMS_TO_TICKS(500));
     }

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef struct{
-    int16_t data[3];
+    int16_t data;
     uint8_t sensor_id;
 } raw_data_t;
 

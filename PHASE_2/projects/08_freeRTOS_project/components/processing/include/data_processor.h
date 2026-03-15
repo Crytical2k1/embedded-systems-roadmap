@@ -1,6 +1,16 @@
 #ifndef DATA_PROCESSOR_H
 #define DATA_PROCESSOR_H
 
+#define DATA_STATUS_PRIO 10
+
+//helpers
+#define NTC_SENSOR_ID 0
+#define PHOTO_SENSOR_ID 1
+#define IMU_SENSOR_ID 2
+
+// Telemetry
+#define SYNC_VALUE 0xAA55
+
 //refactor constants
 #define VD_RESISTOR 5100U //5.1kOhm known resistance of voltage divider
 #define V_IN 3300 //3.3V  vref for voltage divider
@@ -15,6 +25,8 @@
 #define PHOTO_R10 30000.0f // resistance at 10Lux, 30kOhm (dont know)
 #define PHOTO_GAMMA (float)0.7 // gamma value
 
+
 void raw_proccesing_task(void *pvParameters);
+void data_status_task(void *pvParameters);
 
 #endif
