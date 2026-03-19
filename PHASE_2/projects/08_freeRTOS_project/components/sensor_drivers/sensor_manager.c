@@ -17,15 +17,20 @@ static const char *TAG = "sensor_manager";
 #define NTC_SENSOR_ID 0
 #define PHOTO_SENSOR_ID 1
 
+// sensor sampling period
+#define NTC_PERIOD 1000
+#define PHOTO_PERIOD  500
+
 //forward declaration
 static void ntc_manager_init(void *pvParameters);
 static void photo_manager_init(void *pvParameters);
-static void ntc_read_task(void *pvParameters);
-static void photo_read_task(void *pvParameters);
+static void ntc_read_timer(TimerHandle_t xTimer);
+static void photo_read_timer(TimerHandle_t xTimer);
 
 //main manager function
 void sensor_manager_init(void *pvParameters) {
     QueueHandle_t raw_data_queue = pvParameters;
+    TimerHandle_t xTimerNTC, xTimerPHOTO;
     
     //TODO------------------------------------------------>
     //buzzer_init();
@@ -68,9 +73,16 @@ void sensor_manager_init(void *pvParameters) {
     //set bits to system ready
     xEventGroupSetBits(system_event_group, EVENT_SYSTEM_READY);
     ESP_LOGI(TAG, "Event System Ready set. Running tasks...");
-    //start running tasks
-    xTaskCreate(ntc_read_task,"read_ntc", 4092, (void *)raw_data_queue, NTC_READ_PRIO, NULL);
-    xTaskCreate(photo_read_task,"read_light", 4092, (void *)raw_data_queue, PHOTO_READ_PRIO, NULL);
+    //start running timers
+    xTimerNTC = xTimerCreate("NTC_timer", pdMS_TO_TICKS(NTC_PERIOD), pdTRUE, (void *)raw_data_queue, ntc_read_timer);
+    xTimerPHOTO = xTimerCreate("PHOTO_timer", pdMS_TO_TICKS(PHOTO_PERIOD), pdTRUE, (void *)raw_data_queue, photo_read_timer);
+    if ((xTimerNTC == NULL) || (xTimerPHOTO == NULL)) {
+        ESP_LOGE(TAG, "Failed to create sensor timers");
+    } else {
+        if ((xTimerStart(xTimerNTC, 0) != pdPASS) || (xTimerStart(xTimerPHOTO, 0) != pdPASS)) {
+            ESP_LOGE(TAG, "Failed to start sensor timers");
+        }
+    }
     ESP_LOGI(TAG, "System startup complete. Loop running.");
 
     //manager init task done
@@ -97,26 +109,17 @@ static void photo_manager_init(void *pvParameters) {
     vTaskDelete(NULL);
 }
 
-void ntc_read_task(void *pvParameters) {
-    QueueHandle_t raw_data_queue = pvParameters;
+static void ntc_read_timer(TimerHandle_t xTimer) {
+    QueueHandle_t raw_data_queue = (QueueHandle_t) pvTimerGetTimerID(xTimer);
     raw_data_t raw_data_ntc;
     raw_data_ntc.sensor_id = NTC_SENSOR_ID;
-
-    while (1) {
-        raw_data_ntc.data = ntc_read();
-        xQueueSendToBack(raw_data_queue, &raw_data_ntc, pdMS_TO_TICKS(100));
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    raw_data_ntc.data = ntc_read();
+    xQueueSendToBack(raw_data_queue, &raw_data_ntc, 0);
 }
-
-void photo_read_task(void *pvParameters) {
-    QueueHandle_t raw_data_queue = pvParameters;
+static void photo_read_timer(TimerHandle_t xTimer) {
+    QueueHandle_t raw_data_queue = (QueueHandle_t) pvTimerGetTimerID(xTimer);
     raw_data_t raw_data_photo;
     raw_data_photo.sensor_id = PHOTO_SENSOR_ID;
-
-    while (1) {
-        raw_data_photo.data = photo_read();
-        xQueueSendToBack(raw_data_queue, &raw_data_photo, pdMS_TO_TICKS(100));
-        vTaskDelay(pdMS_TO_TICKS(500));
-    }
+    raw_data_photo.data = photo_read();
+    xQueueSendToBack(raw_data_queue, &raw_data_photo, 0);
 }

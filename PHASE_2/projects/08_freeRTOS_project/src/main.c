@@ -44,11 +44,10 @@ void app_main() {
     }
     ESP_LOGI(TAG, "Successfully create data telemetry task.");
     //initialize processing task
-    //queue_params_t *params = malloc(sizeof(queue_params_t));
-    queue_params_t params;
-    params.raw_queue = raw_data_queue;
-    params.telemetry_queue = telemetry_queue;
-    esp_ret = xTaskCreate(raw_proccesing_task, "raw_processing_task", 4096, (void *)&params, PROCESS_DATA_PRIO, NULL);
+    queue_params_t *params = malloc(sizeof(queue_params_t));
+    params->raw_queue = raw_data_queue;
+    params->telemetry_queue = telemetry_queue;
+    esp_ret = xTaskCreate(raw_proccesing_task, "raw_processing_task", 4096, (void *)params, PROCESS_DATA_PRIO, NULL);
     if (esp_ret != pdPASS) {
         ESP_LOGE(TAG, "FATAL, failed to create data processing task");
         return;

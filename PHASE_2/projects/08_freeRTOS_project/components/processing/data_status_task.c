@@ -1,3 +1,5 @@
+#include "data_processor.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "driver/gpio.h"
@@ -14,9 +16,6 @@ static const char *TAG = "data_status_task";
 static void send_data_status(uint8_t data_status);
 
 void data_status_task(void *pvParameters) {
-    QueueHandle_t queue = pvParameters;
-    uint8_t received_value;
-    BaseType_t xStatus;
 
     //setup 74HC595
     gpio_config_t dev_config = {
@@ -30,13 +29,9 @@ void data_status_task(void *pvParameters) {
     }
 
     while (1) {
-        //receive data from queue
-        xStatus = xQueueReceive(queue, &received_value, portMAX_DELAY);
-        if (xStatus != pdPASS) {
-            ESP_LOGE(TAG, "Failed to received data status");
-            continue;
-        }
-        send_data_status(received_value);
+        //receive data from task notification
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        send_data_status(latest_data_status);
     }
 }
 

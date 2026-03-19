@@ -23,16 +23,19 @@ typedef enum {
     IMU_SENSOR_RANGE = (1 << 0),
 } anomalies_system_bits_t; // pin out of 74HC595
 
+volatile uint8_t latest_data_status = 0;
+
 //forward declaration
 static uint16_t adc_raw_to_resistance(uint16_t data); 
 static int16_t resistance_to_value(uint16_t resistance, uint8_t sensor_id);
-static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_status, int16_t data, uint8_t sensor_id, QueueHandle_t data_status_queue);
+static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_status, int16_t data, uint8_t sensor_id, TaskHandle_t task_handle);
 static void set_telemetry(telemetry_format_t *telemetry, int16_t data, uint8_t sensor_id, uint8_t status, uint32_t time_frame);
 
 void raw_proccesing_task(void *pvParameters) {
     queue_params_t *params = (queue_params_t *)pvParameters;
     QueueHandle_t raw_queue = params->raw_queue;
     QueueHandle_t telemetry_queue = params-> telemetry_queue;
+    TaskHandle_t data_status_task_handle;
 
     BaseType_t xStatus;
     raw_data_t received_value;
@@ -42,8 +45,7 @@ void raw_proccesing_task(void *pvParameters) {
     uint32_t time_frame = 0;
     anomalies_system_bits_t data_status;
     // Data status initialization
-    QueueHandle_t data_status_queue = xQueueCreate(3, 1);
-    esp_err_t esp_ret = xTaskCreate(data_status_task, "data_status_task", 2048, (void *)data_status_queue, DATA_STATUS_PRIO, NULL);
+    esp_err_t esp_ret = xTaskCreate(data_status_task, "data_status_task", 2048, NULL, DATA_STATUS_PRIO, &data_status_task_handle);
     if (esp_ret != pdPASS) {
         ESP_LOGE(TAG, "FATAL, failed to create data status task");
         return;
@@ -68,7 +70,7 @@ void raw_proccesing_task(void *pvParameters) {
             //process the data based on the sensor
             data_buffer = resistance_to_value(data_buffer, received_value.sensor_id);
         }
-        data_status = check_data_range(&data_status, data_buffer, received_value.sensor_id, data_status_queue);
+        data_status = check_data_range(&data_status, data_buffer, received_value.sensor_id, data_status_task_handle);
         set_telemetry(&telemetry, data_buffer, received_value.sensor_id, data_status, time_frame++);
 
         //send telemetry to telemetry handler module
@@ -93,7 +95,7 @@ static int16_t resistance_to_value(uint16_t resistance, uint8_t sensor_id) {
     return 0;
 }
 
-static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_status, int16_t data, uint8_t sensor_id, QueueHandle_t data_status_queue) {
+static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_status, int16_t data, uint8_t sensor_id, TaskHandle_t task_handle) {
     if (sensor_id == NTC_SENSOR_ID) {
         if (data < RANGE_LOW_TEMP || data > RANGE_HIGH_TEMP) {
             *data_status |= NTC_SENSOR_RANGE;
@@ -113,7 +115,8 @@ static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_st
     } else {
         *data_status |= SYSTEM_GOOD;
     }
-    xQueueSendToBack(data_status_queue, data_status, pdMS_TO_TICKS(100));
+    latest_data_status = *data_status;
+    xTaskNotifyGive(task_handle);
     return *data_status;
 }
 

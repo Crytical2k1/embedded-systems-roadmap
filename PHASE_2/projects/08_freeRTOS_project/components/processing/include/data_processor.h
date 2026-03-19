@@ -12,6 +12,7 @@
 #define PHOTO_SENSOR_ID 1
 #define IMU_SENSOR_ID 2
 
+extern volatile uint8_t latest_data_status;
 typedef struct {
     QueueHandle_t raw_queue;
     QueueHandle_t telemetry_queue;
