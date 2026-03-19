@@ -13,19 +13,6 @@ typedef struct{
     uint8_t sensor_id;
 } raw_data_t;
 
-typedef struct {
-    //start marker
-    uint16_t sync;
-    //header
-    //uint8_t packet_id; //what kind of packet it sending
-    uint8_t source_id; // sensor id
-    uint8_t length; //length of the telemetry sent
-    uint32_t timestamp;
-    int16_t payload_data; // sensor data
-    uint8_t data_status; //data out of range check
-    uint16_t crc; // checksum for error detection
-} telemetry_format_t;
-
 #define RANGE_LOW_LIGHT 100
 #define RANGE_LOW_TEMP 0
 #define RANGE_HIGH_TEMP 50
@@ -41,17 +28,20 @@ static uint16_t adc_raw_to_resistance(uint16_t data);
 static int16_t resistance_to_value(uint16_t resistance, uint8_t sensor_id);
 static anomalies_system_bits_t check_data_range(anomalies_system_bits_t *data_status, int16_t data, uint8_t sensor_id, QueueHandle_t data_status_queue);
 static void set_telemetry(telemetry_format_t *telemetry, int16_t data, uint8_t sensor_id, uint8_t status, uint32_t time_frame);
-static void print_telemetry(telemetry_format_t *t);
 
 void raw_proccesing_task(void *pvParameters) {
-    QueueHandle_t queue = pvParameters;
+    queue_params_t *params = (queue_params_t *)pvParameters;
+    QueueHandle_t raw_queue = params->raw_queue;
+    QueueHandle_t telemetry_queue = params-> telemetry_queue;
+
     BaseType_t xStatus;
     raw_data_t received_value;
     telemetry_format_t telemetry;
+
     int16_t data_buffer = 0;
     uint32_t time_frame = 0;
     anomalies_system_bits_t data_status;
-
+    // Data status initialization
     QueueHandle_t data_status_queue = xQueueCreate(3, 1);
     esp_err_t esp_ret = xTaskCreate(data_status_task, "data_status_task", 2048, (void *)data_status_queue, DATA_STATUS_PRIO, NULL);
     if (esp_ret != pdPASS) {
@@ -62,7 +52,7 @@ void raw_proccesing_task(void *pvParameters) {
 
     while (1) {
         //receive data from queue
-        xStatus = xQueueReceive(queue, &received_value, portMAX_DELAY);
+        xStatus = xQueueReceive(raw_queue, &received_value, portMAX_DELAY);
         if (xStatus != pdPASS) {
             ESP_LOGE(TAG, "Failed to received data from sensor");
             continue;
@@ -81,7 +71,8 @@ void raw_proccesing_task(void *pvParameters) {
         data_status = check_data_range(&data_status, data_buffer, received_value.sensor_id, data_status_queue);
         set_telemetry(&telemetry, data_buffer, received_value.sensor_id, data_status, time_frame++);
 
-        print_telemetry(&telemetry);
+        //send telemetry to telemetry handler module
+        xQueueSendToBack(telemetry_queue, &telemetry, pdMS_TO_TICKS(100));
     }
 }
 
@@ -153,14 +144,4 @@ static void set_telemetry(telemetry_format_t *telemetry, int16_t data, uint8_t s
     telemetry->data_status = status;
     //checksum
     telemetry->crc = crc16_ccitt((uint8_t*)&telemetry->source_id, sizeof(telemetry_format_t) - sizeof(telemetry->sync) - sizeof(telemetry->crc));
-}
-
-static void print_telemetry(telemetry_format_t *t) {
-    printf("SYNC: 0x%04X | ", t->sync);
-    printf("SRC: %u | ", t->source_id);
-    printf("LEN: %u | ", t->length);
-    printf("TIME: %lu | ", t->timestamp);
-    printf("DATA: %d | ", t->payload_data);
-    printf("STATUS: %u | ", t->data_status);
-    printf("CRC: 0x%04X\n", t->crc);
 }

@@ -31,7 +31,7 @@ void sensor_manager_init(void *pvParameters) {
     //buzzer_init();
 
     //set ADC bit width
-    esp_err_t esp_ret = adc1_config_width(4095);
+    esp_err_t esp_ret = adc1_config_width(ADC_WIDTH_BIT_12);
     if(esp_ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set ADC bit width");
     }

@@ -1,6 +1,10 @@
 #ifndef DATA_PROCESSOR_H
 #define DATA_PROCESSOR_H
 
+#include <stdint.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+
 #define DATA_STATUS_PRIO 10
 
 //helpers
@@ -8,8 +12,25 @@
 #define PHOTO_SENSOR_ID 1
 #define IMU_SENSOR_ID 2
 
+typedef struct {
+    QueueHandle_t raw_queue;
+    QueueHandle_t telemetry_queue;
+} queue_params_t;
+
 // Telemetry
 #define SYNC_VALUE 0xAA55
+typedef struct {
+    //start marker
+    uint16_t sync;
+    //header
+    //uint8_t packet_id; //what kind of packet it sending
+    uint8_t source_id; // sensor id
+    uint8_t length; //length of the telemetry sent
+    uint32_t timestamp;
+    int16_t payload_data; // sensor data
+    uint8_t data_status; //data out of range check
+    uint16_t crc; // checksum for error detection
+} telemetry_format_t;
 
 //refactor constants
 #define VD_RESISTOR 5100U //5.1kOhm known resistance of voltage divider
