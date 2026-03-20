@@ -16,6 +16,8 @@ static const char *TAG = "main";
 
 void app_main() {
     vTaskDelay(pdMS_TO_TICKS(2000));
+    //initialize wifi connection
+    wifi_init_sta();
     //create event group
     system_event_group = xEventGroupCreate();
     if (system_event_group == NULL) {

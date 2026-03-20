@@ -5,21 +5,10 @@
 #include "esp_log.h"
 
 static const char *TAG = "telemetry";
+telemetry_wifi_t latest_telemetry = {0};
 
-typedef struct {
-    //start marker
-    uint16_t sync;
-    //header
-    //uint8_t packet_id; //what kind of packet it sending
-    uint8_t source_id; // sensor id
-    uint8_t length; //length of the telemetry sent
-    uint32_t timestamp;
-    int16_t payload_data; // sensor data
-    uint8_t data_status; //data out of range check
-    uint16_t crc; // checksum for error detection
-} telemetry_format_t;
 
-static void print_telemetry(telemetry_format_t *t) {
+static void print_telemetry(telemetry_wifi_t *t) {
     printf("SYNC: 0x%04X | ", t->sync);
     printf("SRC: %u | ", t->source_id);
     printf("LEN: %u | ", t->length);
@@ -32,7 +21,7 @@ static void print_telemetry(telemetry_format_t *t) {
 void telemetry_send_task(void *pvParameters) {
     QueueHandle_t telemetry_queue = pvParameters;
     BaseType_t xStatus;
-    telemetry_format_t telemetry_buffer;
+    telemetry_wifi_t telemetry_buffer;
 
     while (1) {
         xStatus = xQueueReceive(telemetry_queue, &telemetry_buffer, portMAX_DELAY);
@@ -40,6 +29,11 @@ void telemetry_send_task(void *pvParameters) {
             ESP_LOGE(TAG, "Failed to recive data through telemetry queue");
             continue;
         }
+        if (xSemaphoreTake(telemetry_mutex, pdMS_TO_TICKS(100))) {
+            latest_telemetry = telemetry_buffer;
+            xSemaphoreGive(telemetry_mutex);
+        }
+
         print_telemetry(&telemetry_buffer);
     }
 }
