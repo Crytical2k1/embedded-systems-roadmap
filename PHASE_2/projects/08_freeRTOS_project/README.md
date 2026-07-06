@@ -1,8 +1,3 @@
-act as a university teacher, in the embedded system industry. Hand me an exercise/project to put into practice every aspect of FreeRTOS on an ESP32 that we have learned (Task priorities, queues, mutexes and semaphores, event groups, software timers, task notifications, and debugging)
-Make the project suitable for a medium labs project (access to different kind of sensors, and ESP32 but no part modeling or similar)
-Write the project as if it was homework or an statement for the project with enough details for the student to know how to proceed.
-As we are in the aerospace engineering faculty, i would like to have a project, somehow related to the style
-
 # Project Statement
 
 In aerospace systems, spacecraft and aircraft continuously monitor **environmental conditions, structural loads, and system health**. These measurements are processed in real-time by embedded computers which must handle multiple tasks simultaneously while ensuring **deterministic timing and safe data sharing**.

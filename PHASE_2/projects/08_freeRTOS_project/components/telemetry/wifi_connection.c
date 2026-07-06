@@ -3,9 +3,6 @@
 #include "nvs_flash.h"
 #include "esp_log.h"
 
-#define WIFI_SSD "MOVISTAR_7E0A"
-#define WIFI_PASSWORD "47473EDE92A777DA127E"
-
 httpd_handle_t server = NULL;
 SemaphoreHandle_t telemetry_mutex = NULL;
 static const char *TAG = "Wifi_connection";
