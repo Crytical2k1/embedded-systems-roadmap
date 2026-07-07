@@ -1,6 +1,7 @@
 #include "main.h"
 #include "motor.h"
 #include "encoder.h"
+#include "speed_controller.h"
 
 #include "driver/gpio.h"
 #include "driver/ledc.h"
@@ -10,12 +11,16 @@
 void app_main() {
     motor_enable();
     encoder_init();
-
-    motor_forward(180);
+    speed_controller_init();
 
     while (1) {
-        printf("RPM = %.2f\n", encoder_get_rpm());
 
-        vTaskDelay(pdMS_TO_TICKS(100));
+        speed_controller_set_target(150);
+
+        vTaskDelay(pdMS_TO_TICKS(5000));
+
+        speed_controller_set_target(-150);
+
+        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }
