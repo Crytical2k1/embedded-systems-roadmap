@@ -56,19 +56,23 @@ static void speed_control(void) {
 
     //limit_pwm();
     //new version
-    pwm = pid_compute(
-        &motor_pid,
-        target,
-        rpm,
-        0.1f //due to the controller running at 50ms
-    );
-    limit_pwm();
-    ESP_LOGI(TAG, "Target %.1f RPM | Actual %.1f RPM | PWM %.1f", target_rpm, rpm, pwm);
-    if (direction == MOTOR_FORWARD) {
-        motor_forward((uint8_t)pwm);
-    } else {
-        motor_backward((uint8_t)pwm);
+    uint8_t segmented_target = (fabsf(target_rpm) - rpm) / 5;
+    for (uint8_t i = 5; i > 0; i--) {
+        pwm = pid_compute(
+            &motor_pid,
+            target - segmented_target * i,
+            rpm,
+            0.1f //due to the controller running at 100ms
+        );
+        
+        limit_pwm();
+        if (direction == MOTOR_FORWARD) {
+            motor_forward((uint8_t)pwm);
+        } else {
+            motor_backward((uint8_t)pwm);
+        }
     }
+    ESP_LOGI(TAG, "Target %.1f RPM | Actual %.1f RPM | PWM %.1f", target_rpm, rpm, pwm);
 }
     
 
@@ -102,5 +106,9 @@ void speed_controller_set_target(float rpm) {
 
 float speed_controller_get_target(void) {
     return target_rpm;
+}
+
+void speed_controller_stop(void) {
+    target_rpm = 0;
 }
 

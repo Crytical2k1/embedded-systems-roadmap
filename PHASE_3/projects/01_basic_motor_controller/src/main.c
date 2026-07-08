@@ -19,6 +19,10 @@ void app_main() {
 
         vTaskDelay(pdMS_TO_TICKS(5000));
 
+        speed_controller_stop();
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
         speed_controller_set_target(-150);
 
         vTaskDelay(pdMS_TO_TICKS(5000));
