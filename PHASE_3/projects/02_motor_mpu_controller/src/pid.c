@@ -49,6 +49,9 @@ float pid_compute(pid_controller *pid,
     if (output < pid->output_min) {
         output = pid->output_min;
     }
+    if (output > pid->output_max) {
+        output = pid->output_max;
+    }
 
     return output;
 }

@@ -26,7 +26,7 @@ typedef enum {
 
 static float target_rpm = 0.0f;
 static float pwm = 0;
-static const char *TAG = "motor";
+//static const char *TAG = "motor";
 //static float error = 0;
 
 static pid_controller motor_pid;
@@ -50,12 +50,7 @@ static void speed_control(void) {
         target = -target;
     }
     float rpm = fabsf(encoder_get_rpm());
-    //old version
-    //error = target_rpm - rpm;
-    //pwm_output += Kp * error;
-
-    //limit_pwm();
-    //new version
+    
     uint8_t segmented_target = (fabsf(target_rpm) - rpm) / 5;
     for (uint8_t i = 5; i > 0; i--) {
         pwm = pid_compute(
