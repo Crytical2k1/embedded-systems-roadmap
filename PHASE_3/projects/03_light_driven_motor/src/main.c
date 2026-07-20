@@ -1,10 +1,10 @@
 #include "main.h"
 #include "motor.h"
 #include "encoder.h"
-#include "speed_controller.h"
 #include "imu_driver.h"
 #include "imu_task.h"
 #include "angle_controller.h"
+#include "sensor_driver.h"
 
 #include "driver/gpio.h"
 #include "driver/ledc.h"
@@ -13,6 +13,7 @@
 
 #define IMU_TASK_PRIO 5U
 #define ANGLE_CONTROL_PRIO 5U
+#define PHOTO_TASK_PRIO 4U
 
 void app_main() {
     motor_enable();
@@ -24,6 +25,5 @@ void app_main() {
 
     vTaskDelay(pdMS_TO_TICKS(500)); // let the complementary filter settle for a few cycles before closing the loop
 
-    angle_controller_set_target(0.0f); //the angle to hold
-    angle_controller_enable(true);
+    photo_tracking_init(PHOTO_TASK_PRIO);
 }

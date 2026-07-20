@@ -27,8 +27,8 @@ static void angle_task(void *pvParameters) {
 
     while (1) {
         if (controller_enabled) {
-            float current_angle = imu_filter_get_angle();
-            float rate = imu_filter_get_rate(); //deg/s, straight from the gyro
+            float current_angle = imu_filter_get_heading();
+            float rate = imu_filter_get_yaw_rate(); //deg/s, straight from the gyro
             float error = target_angle - current_angle;
 
             //calculates the integral value and checks if it is inside the limits

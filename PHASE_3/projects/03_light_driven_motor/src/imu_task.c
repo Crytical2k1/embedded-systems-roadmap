@@ -66,7 +66,7 @@ static void imu_task(void *prParameters) {
         imu_filter_update(accel, gyro, dt_s);
         
         //For debuggin purposes only
-        ESP_LOGI(TAG, "angle=%.2f rate=%.2f", imu_filter_get_angle(), imu_filter_get_rate());
+        //ESP_LOGI(TAG, "angle=%.2f rate=%.2f", imu_filter_get_angle(), imu_filter_get_rate());
 
         vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(IMU_LOOP_PERIOD_MS));
     }
