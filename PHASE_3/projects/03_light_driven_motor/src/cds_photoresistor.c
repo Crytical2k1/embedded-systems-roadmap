@@ -72,6 +72,8 @@ static void photo_task(void *pvParameters) {
         int64_t now_us = esp_timer_get_time();
         float current_heading = imu_filter_get_heading();
 
+        printf("TLM, %.2f, %.2f, %.2f\n", current_heading, light_error, angle_controller_get_target());
+
         //rotate just if the angle is big enough
         if (fabsf(light_error) > LIGHT_DEADBAND_DEG) {
             state = LIGHT_STATE_TRACKING;
