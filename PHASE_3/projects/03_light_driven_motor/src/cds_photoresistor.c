@@ -23,7 +23,7 @@ typedef enum {
     LIGHT_STATE_TRACKING,
     LIGHT_STATE_SWEEPING,
     LIGHT_STATE_RETURNING
-} ligth_state_t;
+} light_state_t;
 
 static const char *TAG = "photo_driver";
 static const uint8_t photo_pin_1 = ADC1_CHANNEL_6;
@@ -85,7 +85,7 @@ float calculate_light_error(float left_light, float right_light, bool timeout) {
 
 static void photo_task(void *pvParameters) {
     photo_reading_t value;
-    ligth_state_t state = LIGHT_STATE_IDLE;
+    light_state_t state = LIGHT_STATE_IDLE;
     float sweep_target = 0.0f;
     float sweep_start_heading = 0.0f;
     float sweep_start_time_us = 0.0f;
