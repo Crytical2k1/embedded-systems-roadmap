@@ -13,7 +13,10 @@
 #define PHOTO_TASK_PERIOD_MS 100
 #define IDLE_TIMEOUT_S 10.0f
 #define SWEEP_COMPLETE_TOLERANCE_DEG 5.0f
-#define SWEEP_TIMEOUT_S 3.0f
+#define SWEEP_TIMEOUT_S 1.0f
+#define MAX_TORQUE 90.0f
+#define SENSOR_THRESHOLD 3500.0f
+#define SENSOR_TIMEOUT 1000000.0f
 
 typedef enum {
     LIGHT_STATE_IDLE,
@@ -25,6 +28,8 @@ typedef enum {
 static const char *TAG = "photo_driver";
 static const uint8_t photo_pin_1 = ADC1_CHANNEL_6;
 static const uint8_t photo_pin_2 = ADC1_CHANNEL_7;
+
+static float last_ligth_error = 0.0f;
 
 //Initialized the photo sensors
 esp_err_t photo_init(void) {
@@ -54,6 +59,30 @@ void photo_read(photo_reading_t *value) {
     value->sensor_2 = adc1_get_raw(photo_pin_2);
 }
 
+float calculate_light_error(float left_light, float right_light, bool timeout) {
+    float light_error;
+
+    bool left_detected = left_light < SENSOR_THRESHOLD;
+    bool right_detected = right_light < SENSOR_THRESHOLD;
+
+    if (left_detected && right_detected) {
+        float difference = left_light - right_light;
+        float total = left_light + right_light;
+        light_error = atan2f(difference, total) * 180.0 / (float)M_PI;
+    } else if (!left_detected && right_detected) {
+        light_error = MAX_TORQUE;
+    } else if (left_detected && !right_detected) {
+        light_error = -MAX_TORQUE;
+    } else {
+        light_error = last_ligth_error;
+    }
+    last_ligth_error = light_error;
+    if (timeout) {
+        last_ligth_error = 0.0f;
+    } 
+    return light_error;
+}
+
 static void photo_task(void *pvParameters) {
     photo_reading_t value;
     ligth_state_t state = LIGHT_STATE_IDLE;
@@ -63,15 +92,15 @@ static void photo_task(void *pvParameters) {
     int64_t last_light_seen_us = esp_timer_get_time();
 
     while (1) {
-        photo_read(&value);
-
-        float difference = (float)value.sensor_1 - (float)value.sensor_2;
-        float total = (float)value.sensor_1 + (float)value.sensor_2;
-        float light_error = atan2f(difference, total) * 180.0 / (float)M_PI;
-
         int64_t now_us = esp_timer_get_time();
         float current_heading = imu_filter_get_heading();
 
+        photo_read(&value);
+        int64_t elapsed_us = now_us - last_light_seen_us;
+        bool sensor_timeout = elapsed_us > SENSOR_TIMEOUT;
+        float light_error = calculate_light_error(value.sensor_1, value.sensor_2, sensor_timeout);
+
+        printf("Values, %.2f, %.2f\n", (float)value.sensor_1, (float)value.sensor_2);
         printf("TLM, %.2f, %.2f, %.2f\n", current_heading, light_error, angle_controller_get_target());
 
         //rotate just if the angle is big enough
