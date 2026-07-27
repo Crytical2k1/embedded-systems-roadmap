@@ -29,7 +29,7 @@ float pid_compute(pid_controller *pid,
 {
     float error = setpoint - measurement;
 
-    pid->integral += error + dt;
+    pid->integral += error * dt;
     if (pid->integral > 100.0f) {
         pid->integral = 100.0f;
     }
