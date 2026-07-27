@@ -20,6 +20,7 @@ static const char *TAG = "angle_control";
 static float target_angle = 0.0f;
 static float integral = 0.0f;
 static volatile bool controller_enabled = false;
+static SemaphoreHandle_t angle_mutex;
 
 static void angle_task(void *pvParameters) {
     TickType_t last_wake = xTaskGetTickCount();
@@ -31,15 +32,15 @@ static void angle_task(void *pvParameters) {
             float rate = imu_filter_get_yaw_rate(); //deg/s, straight from the gyro
             float error = target_angle - current_angle;
 
-            //calculates the integral value and checks if it is inside the limits
-            integral += error * dt_s;
-            if (integral > INTEGRAL_LIMIT) integral = INTEGRAL_LIMIT;
-            if (integral < -INTEGRAL_LIMIT) integral = -INTEGRAL_LIMIT;
-
             //calculates the PID value
-            float output = KP * error + KI * integral - KD * rate;
-            if (output > OUTPUT_MAX) output = OUTPUT_MAX;
-            if (output < OUTPUT_MIN) output = OUTPUT_MIN;
+            float unsaturated_output = KP * error + KI * integral - KD * rate;
+            float output = clamp(unsaturated_output, OUTPUT_MIN, OUTPUT_MAX);
+            if (output == unsaturated_output || (output >= OUTPUT_MAX && error < 0) || (output <= OUTPUT_MIN && error > 0)) {
+                //calculates the integral value and checks if it is inside the limits
+                integral += error * dt_s;
+                if (integral > INTEGRAL_LIMIT) integral = INTEGRAL_LIMIT;
+                if (integral < -INTEGRAL_LIMIT) integral = -INTEGRAL_LIMIT;
+            }
 
             //rotates the motor
             if (output >= 0.0f) {
@@ -62,13 +63,20 @@ void angle_controller_init(uint8_t prio) {
         ESP_LOGE(TAG, "Failed to create the angle controller task");
         abort();
     }
+    angle_mutex = xSemaphoreCreateMutex();
 }
 
 void angle_controller_set_target(float angle_deg) {
+    xSemaphoreTake(angle_mutex, portMAX_DELAY);
     target_angle = angle_deg;
+    xSemaphoreGive(angle_mutex);
 }
 float angle_controller_get_target(void) {
-    return target_angle;
+    float angle;
+    xSemaphoreTake(angle_mutex, portMAX_DELAY);
+    angle = target_angle;
+    xSemaphoreGive(angle_mutex);
+    return angle;
 }
 void angle_controller_enable(bool enable) {
     controller_enabled = enable;
