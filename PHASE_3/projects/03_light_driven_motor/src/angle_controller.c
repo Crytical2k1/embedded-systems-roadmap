@@ -34,7 +34,7 @@ static void angle_task(void *pvParameters) {
 
             //calculates the PID value
             float unsaturated_output = KP * error + KI * integral - KD * rate;
-            float output = clamp(unsaturated_output, OUTPUT_MIN, OUTPUT_MAX);
+            float output = unsaturated_output < OUTPUT_MIN ? OUTPUT_MIN : unsaturated_output > OUTPUT_MAX ? OUTPUT_MAX : unsaturated_output;
             if (output == unsaturated_output || (output >= OUTPUT_MAX && error < 0) || (output <= OUTPUT_MIN && error > 0)) {
                 //calculates the integral value and checks if it is inside the limits
                 integral += error * dt_s;
