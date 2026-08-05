@@ -44,11 +44,11 @@ The project contains four logical nodes.
 1. OBC <-> HK
 
 - Interface - SPI
-- Baud Rate - 115200 bps
+- SCLK frequency - 10MHz
+- Mode - SPI Mode 0
 - Data bits - 8
-- Stop bits - 1
-- Parity - None
-- Flow Control - None
+- Bit order - MSB First
+- Connection - Standart 4-wire
 
 2. OBC <-> ESP32
 
