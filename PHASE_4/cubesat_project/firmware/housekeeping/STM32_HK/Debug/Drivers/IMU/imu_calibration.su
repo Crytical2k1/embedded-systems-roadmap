@@ -1,4 +1,4 @@
-../Drivers/IMU/imu_calibration.c:22:16:apply_calibration	16	static
-../Drivers/IMU/imu_calibration.c:26:6:imu_calibration_init	24	static
-../Drivers/IMU/imu_calibration.c:33:13:imu_calibration_task	56	static
-../Drivers/IMU/imu_calibration.c:57:13:sensor_calibration	56	static
+../Drivers/IMU/imu_calibration.c:24:16:apply_calibration	16	static
+../Drivers/IMU/imu_calibration.c:28:6:imu_calibration_init	32	static
+../Drivers/IMU/imu_calibration.c:35:13:imu_calibration_task	64	static
+../Drivers/IMU/imu_calibration.c:62:13:sensor_calibration	64	static

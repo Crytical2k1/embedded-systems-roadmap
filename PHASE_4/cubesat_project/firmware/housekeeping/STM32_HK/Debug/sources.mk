@@ -24,6 +24,7 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Drivers/I2C_Manager \
 Drivers/IMU \
 Drivers/Light \
 Drivers/RTC \

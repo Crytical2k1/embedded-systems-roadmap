@@ -1,5 +1,5 @@
 Drivers/IMU/imu_calibration.o: ../Drivers/IMU/imu_calibration.c \
- ../Drivers/IMU/imu_calibration.h ../Drivers/IMU/imu.h ../Core/Inc/main.h \
+ ../Drivers/IMU/imu_calibration.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -30,7 +30,7 @@ Drivers/IMU/imu_calibration.o: ../Drivers/IMU/imu_calibration.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
- ../Core/Inc/i2c.h ../Core/Inc/main.h \
+ ../Drivers/IMU/imu.h ../Core/Inc/i2c.h ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -41,7 +41,6 @@ Drivers/IMU/imu_calibration.o: ../Drivers/IMU/imu_calibration.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 ../Drivers/IMU/imu_calibration.h:
-../Drivers/IMU/imu.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -73,6 +72,7 @@ Drivers/IMU/imu_calibration.o: ../Drivers/IMU/imu_calibration.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/IMU/imu.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/main.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:

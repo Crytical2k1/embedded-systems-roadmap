@@ -9,6 +9,7 @@
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f4xx.o"
 "./Core/Startup/startup_stm32f411ceux.o"
+"./Drivers/I2C_Manager/i2c_manager.o"
 "./Drivers/IMU/imu.o"
 "./Drivers/IMU/imu_calibration.o"
 "./Drivers/IMU/imu_processing.o"

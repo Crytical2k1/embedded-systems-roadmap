@@ -1,10 +1,11 @@
 #include "imu.h"
+#include "i2c_manager.h"
 
-HAL_StatusTypeDef imu_init(void) {
+HAL_StatusTypeDef imu_init(I2C_HandleTypeDef *hi2c) {
 	uint8_t data = 0x00;
 	//Wake up
 	return HAL_I2C_Mem_Write(
-			&hi2c1,
+			hi2c,
 			GY_ADDR,
 			GY_PWR_MGMT_1,
 			I2C_MEMADD_SIZE_8BIT,
@@ -14,13 +15,17 @@ HAL_StatusTypeDef imu_init(void) {
 	);
 }
 
-HAL_StatusTypeDef imu_read(int16_t accel[3], int16_t gyro[3]) {
+HAL_StatusTypeDef imu_read(I2C_HandleTypeDef *hi2c, int16_t accel[3], int16_t gyro[3]) {
 	uint8_t data[14];
 	//store register in buffer
 	uint8_t reg = GY_ACCEL_XOUT_H;
 	//read data from sensor
-	HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
-			&hi2c1,
+	HAL_StatusTypeDef status;
+
+	I2C_manager_lock();
+
+	status = HAL_I2C_Mem_Read(
+			hi2c,
 			GY_ADDR,
 			reg,		//accel_xout_h
 			I2C_MEMADD_SIZE_8BIT,
@@ -28,6 +33,8 @@ HAL_StatusTypeDef imu_read(int16_t accel[3], int16_t gyro[3]) {
 			14,
 			HAL_MAX_DELAY
 	);
+
+	I2C_manager_unlock();
 
 	if (status != HAL_OK) {
 		return status;

@@ -1,0 +1,7 @@
+../Drivers/RTC/rtc.c:20:19:RTC_init	24	static
+../Drivers/RTC/rtc.c:33:6:RTC_task_create	32	static
+../Drivers/RTC/rtc.c:41:13:RTC_task	32	static
+../Drivers/RTC/rtc.c:60:16:BCD_to_Decimal	16	static
+../Drivers/RTC/rtc.c:64:16:Decimal_to_BCD	16	static
+../Drivers/RTC/rtc.c:69:19:RTC_GetDateTime	40	static
+../Drivers/RTC/rtc.c:103:19:RTC_SetDateTime	40	static

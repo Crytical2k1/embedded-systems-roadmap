@@ -19,6 +19,7 @@ RM := rm -rf
 -include Drivers/RTC/subdir.mk
 -include Drivers/Light/subdir.mk
 -include Drivers/IMU/subdir.mk
+-include Drivers/I2C_Manager/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
