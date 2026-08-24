@@ -24,6 +24,7 @@
 #include "cmsis_os.h"
 
 #include "i2c.h"
+#include "adc.h"
 
 
 #include "i2c_manager.h"
@@ -119,7 +120,11 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   I2C_manager_init();
-  sensor_manager_init(&hi2c1);
+  SensorManagerHandle_t sensor_params = {
+		  .hi2c = &hi2c1,
+		  .hadc = &hadc1
+  };
+  sensor_manager_init(&sensor_params);
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)

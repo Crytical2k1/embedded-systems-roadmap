@@ -3,13 +3,12 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "event_groups.h"
-#include "main.h"
 #include <stdio.h>
 
 #include "imu.h"
 #include "imu_calibration.h"
 #include "rtc.h"
-//#include "ntc.h"
+#include "ntc_sensor.h"
 //#include "photo.h"
 
 static const char *TAG = "sensor_manager";
@@ -49,7 +48,10 @@ static void photo_task(void *pvParameters);
 
 //Sensor Manager
 void sensor_manager_init(void *pvParameters) {
-	I2C_HandleTypeDef *hi2c = (I2C_HandleTypeDef *)pvParameters;
+	SensorManagerHandle_t *params = (SensorManagerHandle_t *)pvParameters;
+
+	I2C_HandleTypeDef *hi2c = params->hi2c;
+	ADC_HandleTypeDef *hadc = params->hadc;
 
 	//Create event group
 	sensor_events = xEventGroupCreate();
@@ -75,7 +77,7 @@ void sensor_manager_init(void *pvParameters) {
 		printf("%s RTC initialization failed\r\n", TAG);
 	}
 	//NTC
-	if (NTC_init() == HAL_OK) {
+	if (NTC_init(hadc) == HAL_OK) {
 		printf("%s NTC initialize\r\n", TAG);
 		xEventGroupSetBits(sensor_events, EVENT_NTC_READY);
 	} else {
@@ -100,7 +102,7 @@ void sensor_manager_init(void *pvParameters) {
 	// Start sensor tasks
 	xTaskCreate(imu_task, "IMU", IMU_TASK_STACK_SIZE, hi2c, IMU_TASK_PRIO, NULL);
 	xTaskCreate(rtc_task, "RTC", RTC_TASK_STACK_SIZE, hi2c, RTC_TASK_PRIO, NULL);
-	xTaskCreate(ntc_task, "NTC", NTC_TASK_STACK_SIZE, NULL, NTC_TASK_PRIO, NULL);
+	xTaskCreate(ntc_task, "NTC", NTC_TASK_STACK_SIZE, hadc, NTC_TASK_PRIO, NULL);
 //	xTaskCreate(photo_task, "PHOTO", PHOTO_TASK_STACK_SIZE, NULL, PHOTO_TASK_PRIO, NULL);
 	// Sensor manager finished
 	vTaskDelete(NULL);
@@ -131,9 +133,7 @@ static void imu_task(void *pvParameters) {
 
 static void rtc_task(void *pvParameters) {
 	I2C_HandleTypeDef *hi2c = (I2C_HandleTypeDef *)pvParameters;
-	RTC_DateTime_t rtc;
-
-	RTC_DateTime_t initial_time =
+	RTC_DateTime_t rtc =
 	  {
 	      .seconds = 0,
 	      .minutes = 40,
@@ -144,12 +144,13 @@ static void rtc_task(void *pvParameters) {
 	      .year    = 26
 	  };
 
-	RTC_SetDateTime(hi2c, &initial_time);
+	RTC_SetDateTime(hi2c, &rtc);
 
 	while(1) {
 
 		if (RTC_GetDateTime(hi2c, &rtc) == HAL_OK) {
 			// Store/update system time
+			rtc;
 
 		} else {
 			printf("RTC read failed\r\n");
@@ -160,8 +161,18 @@ static void rtc_task(void *pvParameters) {
 }
 
 static void ntc_task(void *pvParameters) {
+	ADC_HandleTypeDef *hadc = (ADC_HandleTypeDef *)pvParameters;
+	float temperature;
 
 	while(1) {
+		//read ntc
+		if (NTC_read_temperature(hadc, &temperature) == HAL_OK) {
+			//send data to sensor queue
+			temperature;
+
+		} else {
+			printf("NTC read failed\r\n");
+		}
 
 		vTaskDelay(pdMS_TO_TICKS(NTC_LOOP_PERIOD_MS));
 	}

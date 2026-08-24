@@ -1,0 +1,3 @@
+../Drivers/Temperature/ntc_sensor.c:14:19:NTC_init	16	static
+../Drivers/Temperature/ntc_sensor.c:22:7:NTC_convert_to_temperature	24	static
+../Drivers/Temperature/ntc_sensor.c:36:19:NTC_read_temperature	24	static
