@@ -1,4 +1,3 @@
 ../Drivers/IMU/imu_calibration.c:24:16:apply_calibration	1
-../Drivers/IMU/imu_calibration.c:28:6:imu_calibration_init	2
-../Drivers/IMU/imu_calibration.c:35:13:imu_calibration_task	2
-../Drivers/IMU/imu_calibration.c:62:13:sensor_calibration	4
+../Drivers/IMU/imu_calibration.c:28:6:imu_apply_calibration	2
+../Drivers/IMU/imu_calibration.c:35:6:imu_calibration	5

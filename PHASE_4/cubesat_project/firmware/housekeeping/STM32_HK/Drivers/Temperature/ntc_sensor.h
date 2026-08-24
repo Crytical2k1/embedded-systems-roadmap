@@ -1,0 +1,6 @@
+#ifndef TEMPERATURE_NTC_SENSOR_H_
+#define TEMPERATURE_NTC_SENSOR_H_
+
+void NTC_init(void);
+
+#endif /* TEMPERATURE_NTC_SENSOR_H_ */

@@ -4,15 +4,20 @@
 HAL_StatusTypeDef imu_init(I2C_HandleTypeDef *hi2c) {
 	uint8_t data = 0x00;
 	//Wake up
-	return HAL_I2C_Mem_Write(
+	//I2C_manager_lock();
+
+	HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
 			hi2c,
 			GY_ADDR,
 			GY_PWR_MGMT_1,
 			I2C_MEMADD_SIZE_8BIT,
 			&data,
 			1,
-			HAL_MAX_DELAY
+			100
 	);
+	//I2C_manager_unlock();
+
+	return status;
 }
 
 HAL_StatusTypeDef imu_read(I2C_HandleTypeDef *hi2c, int16_t accel[3], int16_t gyro[3]) {

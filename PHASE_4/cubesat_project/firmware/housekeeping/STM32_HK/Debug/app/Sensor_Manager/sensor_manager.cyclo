@@ -1,0 +1,3 @@
+../app/Sensor_Manager/sensor_manager.c:49:6:sensor_manager_init	5
+../app/Sensor_Manager/sensor_manager.c:108:13:imu_task	2
+../app/Sensor_Manager/sensor_manager.c:130:13:rtc_task	2

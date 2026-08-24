@@ -1,2 +1,2 @@
 ../Drivers/IMU/imu.c:4:19:imu_init	40	static
-../Drivers/IMU/imu.c:18:19:imu_read	64	static
+../Drivers/IMU/imu.c:23:19:imu_read	64	static

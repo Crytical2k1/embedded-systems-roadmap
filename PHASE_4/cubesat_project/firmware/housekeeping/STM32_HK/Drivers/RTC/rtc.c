@@ -3,57 +3,31 @@
 
 #include <stdio.h>
 
-#define RTC_LOOP_PERIOD_MS 1000
-
 static const char *TAG = "rtc_task";
 
 //forward declaration
 HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef RTC_GetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datetime);
 HAL_StatusTypeDef RTC_SetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datetime);
-void RTC_task_create(I2C_HandleTypeDef *hi2c);
-static void RTC_task(void *pvParameters);
 static uint8_t BCD_to_Decimal(uint8_t bcd);
 static uint8_t Decimal_to_BCD(uint8_t decimal);
 
 //Code Starts
 HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c) {
 	// Check if the RTC responds on the I2C bus
+	//I2C_manager_lock();
+
 	HAL_StatusTypeDef status = HAL_I2C_IsDeviceReady(
 			hi2c,
 			0xD0,
 			3,
 			HAL_MAX_DELAY
 	);
+
+	//I2C_manager_unlock();
 	HAL_StatusTypeDef rtc_error = hi2c->ErrorCode;
 
 	return status;
-}
-
-void RTC_task_create(I2C_HandleTypeDef *hi2c) {
-	BaseType_t task_created = xTaskCreate(RTC_task, "RTCTask", 256, hi2c, 2, NULL);
-	if (task_created != pdPASS) {
-		printf("$s, Failed to create the RTC task\r\n", TAG);
-		Error_Handler();
-	}
-}
-
-static void RTC_task(void *pvParameters) {
-	I2C_HandleTypeDef *hi2c = (I2C_HandleTypeDef *)pvParameters;
-	RTC_DateTime_t rtc;
-
-	while(1) {
-
-		if (RTC_GetDateTime(hi2c, &rtc) == HAL_OK) {
-			// Store/update system time
-
-			printf("Time: %02d:%02d:%02d\r\n", rtc.hours, rtc.minutes, rtc.seconds);
-			printf("Date: %02d/%02d/%02d\r\n", rtc.date, rtc.month, rtc.year);
-		}
-		rtc;
-
-		vTaskDelay(pdMS_TO_TICKS(RTC_LOOP_PERIOD_MS));
-	}
 }
 
 //Convert BCD to decimal
@@ -71,7 +45,7 @@ HAL_StatusTypeDef RTC_GetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datet
 
 	HAL_StatusTypeDef status;
 
-	//I2C_manager_lock();
+	I2C_manager_lock();
 
 	status = HAL_I2C_Mem_Read(
 			hi2c,
@@ -83,7 +57,7 @@ HAL_StatusTypeDef RTC_GetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datet
 			HAL_MAX_DELAY
 	);
 
-	//I2C_manager_unlock();
+	I2C_manager_unlock();
 
 	if (status != HAL_OK) {
 		return status;
@@ -100,6 +74,7 @@ HAL_StatusTypeDef RTC_GetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datet
 	return HAL_OK;
 }
 
+//Set date time
 HAL_StatusTypeDef RTC_SetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datetime) {
 	uint8_t data[7] = {0};
 
@@ -113,7 +88,7 @@ HAL_StatusTypeDef RTC_SetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datet
 
 	HAL_StatusTypeDef status;
 
-	//I2C_manager_lock();
+	I2C_manager_lock();
 
 	status = HAL_I2C_Mem_Write(
 			hi2c,
@@ -125,7 +100,7 @@ HAL_StatusTypeDef RTC_SetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datet
 			HAL_MAX_DELAY
 	);
 
-	//I2C_manager_unlock();
+	I2C_manager_unlock();
 
 	return status;
 }

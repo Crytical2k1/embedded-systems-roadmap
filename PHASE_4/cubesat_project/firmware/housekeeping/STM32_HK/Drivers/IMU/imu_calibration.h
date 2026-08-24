@@ -10,6 +10,7 @@ typedef enum {
 	AXIS_COUNT
 } axis_t;
 
-void imu_calibration_init(I2C_HandleTypeDef *hi2c);
+void imu_apply_calibration(int16_t accel[3], int16_t gyro[3]);
+void imu_calibration(I2C_HandleTypeDef *hi2c);
 
 #endif /* IMU_IMU_CALIBRATION_H_ */

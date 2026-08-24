@@ -29,6 +29,5 @@ typedef struct {
 HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef RTC_GetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datetime);
 HAL_StatusTypeDef RTC_SetDateTime(I2C_HandleTypeDef *hi2c, RTC_DateTime_t *datetime);
-void RTC_task_create(I2C_HandleTypeDef *hi2c);
 
 #endif /* RTC_RTC_H_ */

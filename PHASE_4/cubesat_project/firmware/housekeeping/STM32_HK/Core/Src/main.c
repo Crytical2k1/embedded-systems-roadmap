@@ -26,13 +26,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-
-#include "i2c_manager.h"
-
-#include "imu.h"
-#include "imu_calibration.h"
-
-#include "rtc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,29 +93,6 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  I2C_manager_init();
-
-  HAL_StatusTypeDef status_init_imu;
-  status_init_imu = imu_init(&hi2c1);
-  HAL_StatusTypeDef status_init_rtc;
-  status_init_rtc = RTC_init(&hi2c1);
-
-  RTC_DateTime_t initial_time =
-  {
-      .seconds = 0,
-      .minutes = 40,
-      .hours   = 14,
-      .day     = 3,
-      .date    = 19,
-      .month   = 8,
-      .year    = 26
-  };
-
-  status_init_rtc = RTC_SetDateTime(&hi2c1, &initial_time);
-  printf("RTC set status = %d\r\n", status_init_rtc);
-
-  RTC_task_create(&hi2c1);
-  imu_calibration_init(&hi2c1);
 
   /* USER CODE END 2 */
 

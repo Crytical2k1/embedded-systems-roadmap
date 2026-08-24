@@ -23,6 +23,11 @@
 #include "main.h"
 #include "cmsis_os.h"
 
+#include "i2c.h"
+
+
+#include "i2c_manager.h"
+#include "sensor_manager.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -113,6 +118,8 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
+  I2C_manager_init();
+  sensor_manager_init(&hi2c1);
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
