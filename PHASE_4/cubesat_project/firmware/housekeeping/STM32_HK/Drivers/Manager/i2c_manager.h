@@ -1,5 +1,5 @@
-#ifndef I2C_MANAGER_I2C_MANAGER_H_
-#define I2C_MANAGER_I2C_MANAGER_H_
+#ifndef MANAGER_I2C_MANAGER_H_
+#define MANAGER_I2C_MANAGER_H_
 
 #include "main.h"
 #include "FreeRTOS.h"
@@ -10,4 +10,4 @@ void I2C_manager_lock(void);	//Lock the i2c bus
 void I2C_manager_unlock(void);	//Unlock the i2c bus
 
 
-#endif /* I2C_MANAGER_I2C_MANAGER_H_ */
+#endif /* MANAGER_I2C_MANAGER_H_ */

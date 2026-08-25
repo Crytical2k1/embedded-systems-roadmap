@@ -1,4 +1,5 @@
-../app/Sensor_Manager/sensor_manager.c:50:6:sensor_manager_init	40	static
-../app/Sensor_Manager/sensor_manager.c:112:13:imu_task	40	static
-../app/Sensor_Manager/sensor_manager.c:134:13:rtc_task	32	static
-../app/Sensor_Manager/sensor_manager.c:163:13:ntc_task	24	static
+../app/Sensor_Manager/sensor_manager.c:54:6:sensor_manager_init	40	static
+../app/Sensor_Manager/sensor_manager.c:116:13:imu_task	40	static
+../app/Sensor_Manager/sensor_manager.c:138:13:rtc_task	32	static
+../app/Sensor_Manager/sensor_manager.c:167:13:ntc_task	24	static
+../app/Sensor_Manager/sensor_manager.c:185:13:photo_task	32	static

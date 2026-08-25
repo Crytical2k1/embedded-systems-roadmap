@@ -1,4 +1,4 @@
-#include "i2c_manager.h"
+#include "../Manager/i2c_manager.h"
 
 static SemaphoreHandle_t i2c1_mutex = NULL;
 

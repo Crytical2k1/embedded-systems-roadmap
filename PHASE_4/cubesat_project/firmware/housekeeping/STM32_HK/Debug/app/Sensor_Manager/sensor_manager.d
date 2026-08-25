@@ -45,7 +45,7 @@ app/Sensor_Manager/sensor_manager.o: \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Drivers/IMU/imu.h ../Core/Inc/i2c.h ../Core/Inc/main.h \
  ../Drivers/IMU/imu_calibration.h ../Drivers/RTC/rtc.h \
- ../Drivers/Temperature/ntc_sensor.h
+ ../Drivers/Temperature/ntc_sensor.h ../Drivers/Light/cds_sensor.h
 ../app/Sensor_Manager/sensor_manager.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -96,3 +96,4 @@ app/Sensor_Manager/sensor_manager.o: \
 ../Drivers/IMU/imu_calibration.h:
 ../Drivers/RTC/rtc.h:
 ../Drivers/Temperature/ntc_sensor.h:
+../Drivers/Light/cds_sensor.h:

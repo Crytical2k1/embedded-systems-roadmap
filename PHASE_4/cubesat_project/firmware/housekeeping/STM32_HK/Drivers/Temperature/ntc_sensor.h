@@ -15,7 +15,7 @@
 #define KELVIN_CELSIUS 273.15f
 
 HAL_StatusTypeDef NTC_init(ADC_HandleTypeDef *hadc);
-HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, float *temperature);
+HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, uint32_t channel, float *temperature);
 float NTC_convert_to_temperature(uint32_t adc_value);
 
 #endif /* TEMPERATURE_NTC_SENSOR_H_ */

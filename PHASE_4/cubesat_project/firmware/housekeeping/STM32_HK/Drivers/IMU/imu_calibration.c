@@ -12,7 +12,7 @@ static int16_t gyro_offset[AXIS_COUNT] = {0};
 #define MPU_SENSITIVITY 16384.0f
 #define CALIBRATION_ITERATIONS 1000
 
-static const char *TAG = "imu_calibration";
+//static const char *TAG = "imu_calibration";
 
 //forward declaration
 void imu_apply_calibration(int16_t accel[3], int16_t gyro[3]);

@@ -30,7 +30,7 @@ Drivers/IMU/imu.o: ../Drivers/IMU/imu.c ../Drivers/IMU/imu.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Core/Inc/i2c.h ../Core/Inc/main.h \
- ../Drivers/I2C_Manager/i2c_manager.h \
+ ../Drivers/IMU/../Manager/i2c_manager.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -76,7 +76,7 @@ Drivers/IMU/imu.o: ../Drivers/IMU/imu.c ../Drivers/IMU/imu.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/main.h:
-../Drivers/I2C_Manager/i2c_manager.h:
+../Drivers/IMU/../Manager/i2c_manager.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:

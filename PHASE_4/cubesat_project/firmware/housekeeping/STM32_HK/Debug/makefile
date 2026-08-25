@@ -19,9 +19,9 @@ RM := rm -rf
 -include Drivers/Temperature/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Drivers/RTC/subdir.mk
+-include Drivers/Manager/subdir.mk
 -include Drivers/Light/subdir.mk
 -include Drivers/IMU/subdir.mk
--include Drivers/I2C_Manager/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk

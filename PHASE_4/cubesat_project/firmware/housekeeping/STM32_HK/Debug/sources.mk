@@ -24,9 +24,9 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
-Drivers/I2C_Manager \
 Drivers/IMU \
 Drivers/Light \
+Drivers/Manager \
 Drivers/RTC \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Drivers/Temperature \

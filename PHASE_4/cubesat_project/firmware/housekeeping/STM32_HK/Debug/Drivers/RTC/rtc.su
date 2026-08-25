@@ -1,5 +1,5 @@
-../Drivers/RTC/rtc.c:16:19:RTC_init	24	static
-../Drivers/RTC/rtc.c:34:16:BCD_to_Decimal	16	static
-../Drivers/RTC/rtc.c:38:16:Decimal_to_BCD	16	static
-../Drivers/RTC/rtc.c:43:19:RTC_GetDateTime	40	static
-../Drivers/RTC/rtc.c:78:19:RTC_SetDateTime	40	static
+../Drivers/RTC/rtc.c:15:19:RTC_init	24	static
+../Drivers/RTC/rtc.c:32:16:BCD_to_Decimal	16	static
+../Drivers/RTC/rtc.c:36:16:Decimal_to_BCD	16	static
+../Drivers/RTC/rtc.c:41:19:RTC_GetDateTime	40	static
+../Drivers/RTC/rtc.c:76:19:RTC_SetDateTime	40	static

@@ -1,5 +1,6 @@
 #include "imu.h"
-#include "i2c_manager.h"
+
+#include "../Manager/i2c_manager.h"
 
 HAL_StatusTypeDef imu_init(I2C_HandleTypeDef *hi2c) {
 	uint8_t data = 0x00;

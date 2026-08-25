@@ -1,5 +1,5 @@
-Drivers/I2C_Manager/i2c_manager.o: ../Drivers/I2C_Manager/i2c_manager.c \
- ../Drivers/I2C_Manager/i2c_manager.h ../Core/Inc/main.h \
+Drivers/Manager/i2c_manager.o: ../Drivers/Manager/i2c_manager.c \
+ ../Drivers/Manager/../Manager/i2c_manager.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -41,7 +41,7 @@ Drivers/I2C_Manager/i2c_manager.o: ../Drivers/I2C_Manager/i2c_manager.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-../Drivers/I2C_Manager/i2c_manager.h:
+../Drivers/Manager/../Manager/i2c_manager.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:

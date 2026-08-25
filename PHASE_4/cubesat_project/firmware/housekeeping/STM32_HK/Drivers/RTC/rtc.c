@@ -1,9 +1,8 @@
 #include "rtc.h"
-#include "i2c_manager.h"
-
 #include <stdio.h>
+#include "../Manager/i2c_manager.h"
 
-static const char *TAG = "rtc_task";
+//static const char *TAG = "rtc_task";
 
 //forward declaration
 HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c);
@@ -25,7 +24,6 @@ HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c) {
 	);
 
 	//I2C_manager_unlock();
-	HAL_StatusTypeDef rtc_error = hi2c->ErrorCode;
 
 	return status;
 }

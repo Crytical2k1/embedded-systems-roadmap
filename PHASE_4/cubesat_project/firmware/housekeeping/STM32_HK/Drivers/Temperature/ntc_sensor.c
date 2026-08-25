@@ -2,13 +2,14 @@
 
 #include "main.h"
 #include <math.h>
+#include "adc_manager.h"
 
 //static const char *TAG = "ntc_driver";
 
 
 //forward declaration
 HAL_StatusTypeDef NTC_init(ADC_HandleTypeDef *hadc);
-HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, float *temperature);
+HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, uint32_t channel, float *temperature);
 float NTC_convert_to_temperature(uint32_t adc_value);
 
 HAL_StatusTypeDef NTC_init(ADC_HandleTypeDef *hadc) {
@@ -33,23 +34,14 @@ float NTC_convert_to_temperature(uint32_t adc_value) {
 	return temp_k - KELVIN_CELSIUS;
 }
 
-HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, float *temperature) {
+HAL_StatusTypeDef NTC_read_temperature(ADC_HandleTypeDef *hadc, uint32_t channel, float *temperature) {
 	HAL_StatusTypeDef status;
 	uint32_t adc_value;
 
-	status = HAL_ADC_Start(hadc);
+	status = ADC_manager_read_channel(hadc, channel, &adc_value);
 	if (status != HAL_OK) {
 		return status;
 	}
-
-	status = HAL_ADC_PollForConversion(hadc, 100);
-	if (status != HAL_OK) {
-		HAL_ADC_Stop(hadc);
-		return status;
-	}
-
-	adc_value = HAL_ADC_GetValue(hadc);
-	HAL_ADC_Stop(hadc);
 
 	*temperature = NTC_convert_to_temperature(adc_value);
 

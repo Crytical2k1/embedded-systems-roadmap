@@ -1,3 +1,0 @@
-../Drivers/I2C_Manager/i2c_manager.c:5:6:I2C_manager_init	2
-../Drivers/I2C_Manager/i2c_manager.c:13:6:I2C_manager_lock	2
-../Drivers/I2C_Manager/i2c_manager.c:18:6:I2C_manager_unlock	2

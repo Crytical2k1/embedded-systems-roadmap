@@ -1,0 +1,3 @@
+../Drivers/Light/cds_sensor.c:14:19:photo_init	16	static
+../Drivers/Light/cds_sensor.c:22:7:photo_convert_to_lux	24	static
+../Drivers/Light/cds_sensor.c:38:19:photo_read_light	32	static
