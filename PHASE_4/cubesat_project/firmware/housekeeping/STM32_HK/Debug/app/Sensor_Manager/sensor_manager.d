@@ -31,6 +31,7 @@ app/Sensor_Manager/sensor_manager.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -43,9 +44,12 @@ app/Sensor_Manager/sensor_manager.o: \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Drivers/IMU/imu.h ../Core/Inc/i2c.h ../Core/Inc/main.h \
  ../Drivers/IMU/imu_calibration.h ../Drivers/RTC/rtc.h \
- ../Drivers/Temperature/ntc_sensor.h ../Drivers/Light/cds_sensor.h
+ ../Drivers/Temperature/ntc_sensor.h ../Drivers/Light/cds_sensor.h \
+ ../app/Telemetry_Manager/telemetry_manager.h
 ../app/Sensor_Manager/sensor_manager.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -78,6 +82,7 @@ app/Sensor_Manager/sensor_manager.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -90,6 +95,8 @@ app/Sensor_Manager/sensor_manager.o: \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Drivers/IMU/imu.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/main.h:
@@ -97,3 +104,4 @@ app/Sensor_Manager/sensor_manager.o: \
 ../Drivers/RTC/rtc.h:
 ../Drivers/Temperature/ntc_sensor.h:
 ../Drivers/Light/cds_sensor.h:
+../app/Telemetry_Manager/telemetry_manager.h:

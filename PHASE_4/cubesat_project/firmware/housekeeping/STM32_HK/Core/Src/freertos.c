@@ -27,10 +27,12 @@
 /* USER CODE BEGIN Includes */
 #include "i2c.h"
 #include "adc.h"
+#include "spi.h"
 
 #include "i2c_manager.h"
 #include "adc_manager.h"
 #include "sensor_manager.h"
+#include "telemetry_manager.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -150,6 +152,11 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	I2C_manager_init();
 	ADC_manager_init();
+
+	telemetry_manager_handle_t tlm_params = {
+			.hspi = &hspi1
+	};
+	telemetry_manager_init(&tlm_params);
 
 	SensorManagerHandle_t sensor_handle = {
 			.hi2c = &hi2c1,

@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "event_groups.h"
+#include "semphr.h"
 #include <stdio.h>
 
 #include "imu.h"
@@ -10,6 +11,8 @@
 #include "rtc.h"
 #include "ntc_sensor.h"
 #include "cds_sensor.h"
+
+#include "telemetry_manager.h"
 
 static const char *TAG = "sensor_manager";
 
@@ -44,6 +47,8 @@ static const char *TAG = "sensor_manager";
 //Event group
 static EventGroupHandle_t sensor_events;
 
+static SemaphoreHandle_t i2c_bus_mutex;
+
 //Forward declaration
 static void imu_task(void *pvParameters);
 static void rtc_task(void *pvParameters);
@@ -59,8 +64,13 @@ void sensor_manager_init(void *pvParameters) {
 
 	//Create event group
 	sensor_events = xEventGroupCreate();
-
 	if (sensor_events == NULL) {
+		Error_Handler();
+	}
+
+	//Create i2c bus
+	i2c_bus_mutex = xSemaphoreCreateMutex();
+	if (i2c_bus_mutex == NULL) {
 		Error_Handler();
 	}
 
@@ -121,15 +131,19 @@ static void imu_task(void *pvParameters) {
 
 	while(1) {
 		//Read IMU
-		if (imu_read(hi2c, accel, gyro) == HAL_OK) {
-			imu_apply_calibration(accel, gyro);
+		if (xSemaphoreTake(i2c_bus_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+			HAL_StatusTypeDef status = imu_read(hi2c, accel, gyro);
+			xSemaphoreGive(i2c_bus_mutex);
 
-		} else {
-			//printf("IMU read failed\r\n");
+			if (status == HAL_OK) {
+				imu_apply_calibration(accel, gyro);
+				//send data to sensor queue
+				telemetry_update_imu(accel, gyro);
+
+			} else {
+				//printf("IMU read failed\r\n");
+			}
 		}
-
-		//Send data to sensor queue
-		// sensor_queue_send();
 
 		vTaskDelay(pdMS_TO_TICKS(IMU_LOOP_PERIOD_MS));
 	}
@@ -151,13 +165,17 @@ static void rtc_task(void *pvParameters) {
 	RTC_SetDateTime(hi2c, &rtc);
 
 	while(1) {
+		if (xSemaphoreTake(i2c_bus_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+			HAL_StatusTypeDef status = RTC_GetDateTime(hi2c, &rtc);
+			xSemaphoreGive(i2c_bus_mutex);
 
-		if (RTC_GetDateTime(hi2c, &rtc) == HAL_OK) {
-			// Store/update system time
-			rtc;
+			if (status == HAL_OK) {
+				//send data to sensor queue
+				telemetry_update_rtc(&rtc);
 
-		} else {
-			//printf("RTC read failed\r\n");
+			} else {
+				//printf("RTC read failed\r\n");
+			}
 		}
 
 		vTaskDelay(pdMS_TO_TICKS(RTC_LOOP_PERIOD_MS));
@@ -172,7 +190,7 @@ static void ntc_task(void *pvParameters) {
 		//read ntc
 		if (NTC_read_temperature(hadc, NTC_ADC_CHANNEL, &temperature) == HAL_OK) {
 			//send data to sensor queue
-			temperature;
+			telemetry_update_ntc(temperature);
 
 		} else {
 			//printf("NTC read failed\r\n");
@@ -191,8 +209,7 @@ static void photo_task(void *pvParameters) {
 		if (photo_read_light(hadc, CDS1_ADC_CHANNEL, &light1) == HAL_OK &&
 			photo_read_light(hadc, CDS2_ADC_CHANNEL, &light2) == HAL_OK) {
 			//send data to sensor queue
-			light1;
-			light2;
+			telemetry_update_photo(light1, light2);
 
 		} else {
 			//printf("CDS read failed\r\n");

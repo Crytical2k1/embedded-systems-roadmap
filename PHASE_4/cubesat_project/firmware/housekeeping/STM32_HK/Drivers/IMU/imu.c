@@ -5,7 +5,7 @@
 HAL_StatusTypeDef imu_init(I2C_HandleTypeDef *hi2c) {
 	uint8_t data = 0x00;
 	//Wake up
-	//I2C_manager_lock();
+	I2C_manager_lock();
 
 	HAL_StatusTypeDef status = HAL_I2C_Mem_Write(
 			hi2c,
@@ -16,7 +16,7 @@ HAL_StatusTypeDef imu_init(I2C_HandleTypeDef *hi2c) {
 			1,
 			100
 	);
-	//I2C_manager_unlock();
+	I2C_manager_unlock();
 
 	return status;
 }

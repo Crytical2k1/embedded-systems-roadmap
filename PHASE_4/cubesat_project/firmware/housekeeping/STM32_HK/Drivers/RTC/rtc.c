@@ -14,7 +14,7 @@ static uint8_t Decimal_to_BCD(uint8_t decimal);
 //Code Starts
 HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c) {
 	// Check if the RTC responds on the I2C bus
-	//I2C_manager_lock();
+	I2C_manager_lock();
 
 	HAL_StatusTypeDef status = HAL_I2C_IsDeviceReady(
 			hi2c,
@@ -23,7 +23,7 @@ HAL_StatusTypeDef RTC_init(I2C_HandleTypeDef *hi2c) {
 			HAL_MAX_DELAY
 	);
 
-	//I2C_manager_unlock();
+	I2C_manager_unlock();
 
 	return status;
 }

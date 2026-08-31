@@ -1,5 +1,5 @@
-../app/Sensor_Manager/sensor_manager.c:54:6:sensor_manager_init	6
-../app/Sensor_Manager/sensor_manager.c:116:13:imu_task	2
-../app/Sensor_Manager/sensor_manager.c:138:13:rtc_task	1
-../app/Sensor_Manager/sensor_manager.c:167:13:ntc_task	1
-../app/Sensor_Manager/sensor_manager.c:185:13:photo_task	2
+../app/Sensor_Manager/sensor_manager.c:59:6:sensor_manager_init	7
+../app/Sensor_Manager/sensor_manager.c:126:13:imu_task	3
+../app/Sensor_Manager/sensor_manager.c:152:13:rtc_task	3
+../app/Sensor_Manager/sensor_manager.c:185:13:ntc_task	2
+../app/Sensor_Manager/sensor_manager.c:203:13:photo_task	3

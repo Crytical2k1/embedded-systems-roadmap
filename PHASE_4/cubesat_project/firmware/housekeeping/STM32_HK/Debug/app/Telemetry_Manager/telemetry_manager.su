@@ -1,0 +1,11 @@
+../app/Telemetry_Manager/telemetry_manager.c:31:6:telemetry_update_imu	16	static
+../app/Telemetry_Manager/telemetry_manager.c:45:6:telemetry_update_rtc	16	static
+../app/Telemetry_Manager/telemetry_manager.c:60:6:telemetry_update_ntc	16	static
+../app/Telemetry_Manager/telemetry_manager.c:69:6:telemetry_update_photo	16	static
+../app/Telemetry_Manager/telemetry_manager.c:80:17:crc16_ccitt	32	static
+../app/Telemetry_Manager/telemetry_manager.c:92:13:refresh_tx_packet	16	static
+../app/Telemetry_Manager/telemetry_manager.c:107:13:arm_spi_for_next_transfer	8	static
+../app/Telemetry_Manager/telemetry_manager.c:116:6:HAL_SPI_TxRxCpltCallback	16	static
+../app/Telemetry_Manager/telemetry_manager.c:121:6:HAL_SPI_ErrorCallback	16	static
+../app/Telemetry_Manager/telemetry_manager.c:129:13:telemetry_manager_task	16	static
+../app/Telemetry_Manager/telemetry_manager.c:136:6:telemetry_manager_init	32	static
