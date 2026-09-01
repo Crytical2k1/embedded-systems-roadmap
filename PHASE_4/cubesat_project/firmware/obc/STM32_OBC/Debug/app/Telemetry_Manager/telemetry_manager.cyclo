@@ -1,0 +1,5 @@
+../app/Telemetry_Manager/telemetry_manager.c:26:17:crc16_ccitt	4
+../app/Telemetry_Manager/telemetry_manager.c:37:6:telemetry_request	9
+../app/Telemetry_Manager/telemetry_manager.c:80:6:telemetry_get_latest	4
+../app/Telemetry_Manager/telemetry_manager.c:93:13:telemetry_manager_task	1
+../app/Telemetry_Manager/telemetry_manager.c:105:6:telemetry_manager_init	2
