@@ -26,8 +26,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "spi.h"
+#include "i2c.h"
 
 #include "telemetry_manager.h"
+#include "oled_display.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +55,7 @@
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
@@ -122,6 +124,12 @@ void StartDefaultTask(void *argument)
 			.cs_pin = TLM_CS_Pin,
 	};
 	telemetry_manager_init(&tlm_params);
+
+	oled_display_handle_t oled_param = {
+			.hi2c = &hi2c1
+	};
+	oled_display_init(&oled_param);
+
   /* Infinite loop */
   for(;;)
   {
@@ -132,6 +140,5 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
 /* USER CODE END Application */
 

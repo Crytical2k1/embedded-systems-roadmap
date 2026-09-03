@@ -1,0 +1,2 @@
+../app/Oled_Display/oled_display.c:11:6:oled_display_task	88	static
+../app/Oled_Display/oled_display.c:59:6:oled_display_init	32	static

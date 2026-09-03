@@ -1,0 +1,8 @@
+../Drivers/Screen/screen.c:53:22:find_char	24	static
+../Drivers/Screen/screen.c:71:6:screen_init	56	static
+../Drivers/Screen/screen.c:103:6:screen_clear	8	static
+../Drivers/Screen/screen.c:107:6:screen_update	1048	static
+../Drivers/Screen/screen.c:121:13:screen_write_cmd	32	static
+../Drivers/Screen/screen.c:127:6:screen_set_pixel	24	static
+../Drivers/Screen/screen.c:141:13:screen_draw_char	32	static
+../Drivers/Screen/screen.c:152:6:screen_draw_string	24	static

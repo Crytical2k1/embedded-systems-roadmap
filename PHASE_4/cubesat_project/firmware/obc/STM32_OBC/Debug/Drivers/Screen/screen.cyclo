@@ -1,0 +1,8 @@
+../Drivers/Screen/screen.c:53:22:find_char	3
+../Drivers/Screen/screen.c:71:6:screen_init	2
+../Drivers/Screen/screen.c:103:6:screen_clear	1
+../Drivers/Screen/screen.c:107:6:screen_update	1
+../Drivers/Screen/screen.c:121:13:screen_write_cmd	1
+../Drivers/Screen/screen.c:127:6:screen_set_pixel	4
+../Drivers/Screen/screen.c:141:13:screen_draw_char	3
+../Drivers/Screen/screen.c:152:6:screen_draw_string	3
